@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# Devilbox-cli v0.0.2: A minimal cli tool to interact with devilbox from anywhere
+# https://github.com/louisgab/devilbox-cli
+#
+
 DEVILBOX_PATH="$HOME/devilbox"
 ENV_FILE=".env"
 PHP_CONFIG="PHP_SERVER="
@@ -7,13 +12,33 @@ MYSQL_CONFIG="MYSQL_SERVER=mysql-"
 DOCROOT_CONFIG="HTTPD_DOCROOT_DIR="
 WWWPATH_CONFIG="HOST_PATH_HTTPD_DATADIR="
 DBPATH_CONFIG="HOST_PATH_MYSQL_DATADIR="
+COLOR_RED="\033[0;31m"
+COLOR_GREEN="\033[0;32m"
+COLOR_YELLOW="\033[0;33m"
+COLOR_DEFAULT="\033[0m"
+
+################################################################################
+## FORMATING HELPERS
+################################################################################
+
+error() {
+    echo -e "${COLOR_RED}Error! ${COLOR_DEFAULT}${1}" >&2
+    exit 1
+}
+
+success() {
+    echo -e "${COLOR_GREEN}Done! ${COLOR_DEFAULT}${1}"
+}
+
+info() {
+    echo -e "${COLOR_YELLOW}Info: ${COLOR_DEFAULT}${1}"
+}
 
 ################################################################################
 ## GENERIC VERSIONS HELPERS
 ################################################################################
 
-function isVersionExisting()
-{
+isVersionExisting () {
     local config=$1
     local version=$2
     if grep -qF "$config$version" "$ENV_FILE" ;then
@@ -23,24 +48,21 @@ function isVersionExisting()
     fi
 }
 
-function getCurrentVersion ()
-{
+getCurrentVersion () {
     local config=$1
     local current
     current=$(grep -Eo "^$config+[.0-9]*" "$ENV_FILE" | sed "s/.*$config//g")
     echo "$current"
 }
 
-function getAllVersions ()
-{
+getAllVersions () {
     local config=$1
     local all
     all=$(grep -Eo "^#*$config+[.0-9]*" "$ENV_FILE" | sed "s/.*$config//g")
     echo "$all"
 }
 
-function setVersion ()
-{
+setVersion () {
     local config=$1
     local new=$2
     local current
@@ -50,7 +72,7 @@ function setVersion ()
     if [[ $isvalid -eq 0 ]]; then
         sed -i -e "s/\(^#*$config$current\).*/#$config$current/" "$ENV_FILE"
         sed -i -e "s/\(^#*$config$new\).*/$config$new/" "$ENV_FILE"
-        if [ "$(getCurrentVersion "$config")" = "$new" ]; then
+        if [[ "$(getCurrentVersion "$config")" = "$new" ]]; then
             echo 0
         else
             echo 1
@@ -64,22 +86,20 @@ function setVersion ()
 ## CONFIG HELPERS
 ################################################################################
 
-function getCurrentConfig ()
-{
+getCurrentConfig () {
     local config=$1
     local current
     current=$(grep -Eo "^$config+[/.a-z0-9]*" "$ENV_FILE" | sed "s/.*$config//g")
     echo "$current"
 }
 
-function setConfig ()
-{
+setConfig () {
     local config=$1
     local new=$2
     local current
     current="$(getCurrentConfig "$config")"
     sed -i -e "s/\(^#*$config${current//\//\\\/}\).*/$config${new//\//\\\/}/" "$ENV_FILE"
-    if [ "$(getCurrentConfig "$config")" = "$new" ]; then
+    if [[ "$(getCurrentConfig "$config")" = "$new" ]]; then
         echo 0
     else
         echo 1
@@ -90,79 +110,73 @@ function setConfig ()
 ## READABLE HELPERS
 ################################################################################
 
-function isReadableVersionExisting()
-{
+isReadableVersionExisting () {
     local type=$1
     local config=$2
     local version=$3
-    if [ "$(isVersionExisting "$config" "$version")" -eq 0 ] ;then
-        echo "$type version $version is available"
+    if [[ "$(isVersionExisting "$config" "$version")" -eq 0 ]] ;then
+        success "$type version $version is available"
     else
-        echo "$type version $version does not exists"
+        error "$type version $version does not exists"
     fi
 }
 
-function getReadableCurrentVersion ()
-{
+getReadableCurrentVersion () {
     local type=$1
     local config=$2
     local current
     current=$(getCurrentVersion "$config")
-    if [ -n "$current" ]; then
-        echo "$type current version is $current"
+    if [[ -n "$current" ]]; then
+        info "$type current version is $current"
     else
-        echo "Couldnt retrieve current version of $type"
+        error "Couldnt retrieve current version of $type"
     fi
 }
 
-function getReadableAllVersions ()
-{
+getReadableAllVersions () {
     local type=$1
     local config=$2
     local all
     all=$(getAllVersions "$config")
-    if [ -n "$all" ]; then
-        echo "$type available versions:"
+    if [[ -n "$all" ]]; then
+        info "$type available versions:"
         echo "$all"
     else
-        echo "Couldnt retrive available versions of $type"
+        error "Couldnt retrive available versions of $type"
     fi
 }
 
-function setReadableVersion ()
-{
+setReadableVersion () {
     local type=$1
     local config=$2
     local new=$3
-    if [ "$(setVersion "$config" "$new")" = "0" ] ;then
-        echo "$type version updated to $new"
+    if [[ "$(setVersion "$config" "$new")" = "0" ]]; then
+        success "$type version updated to $new"
     else
-        echo "$type version change failed"
+        error "$type version change failed"
     fi
 }
 
-function getReadableCurrentConfig ()
-{
+getReadableCurrentConfig () {
     local type=$1
     local config=$2
     local current
     current=$(getCurrentConfig "$config")
-    if [ -n "$current" ]; then
-        echo "$type current config is $current"
+    if [[ -n "$current" ]]; then
+        info "$type current config is $current"
     else
-        echo "Couldnt retrieve current config of $type"
+        error "Couldnt retrieve current config of $type"
     fi
 }
 
-function setReadbleConfig ()
-{
+setReadbleConfig () {
     local type=$1
     local config=$2
     local new=$3
-    if [ "$(setConfig "$config" "$new")" = "0" ] ;then
-        echo "$type config updated to $new"
+    if [[ "$(setConfig "$config" "$new")" = "0" ]]; then
+        success "$type config updated to $new"
     else
-        echo "$type config change failed"
+        error "$type config change failed"
     fi
 }
 
@@ -171,18 +185,15 @@ function setReadbleConfig ()
 ################################################################################
 
 
-function getCurrentApacheVersion ()
-{
+getCurrentApacheVersion () {
     getReadableCurrentVersion "Apache" "$APACHE_CONFIG"
 }
 
-function getAllApacheVersions ()
-{
+getAllApacheVersions () {
     getReadableAllVersions "Apache" "$APACHE_CONFIG"
 }
 
-function setApacheVersion ()
-{
+setApacheVersion () {
     local new=$1
     setReadableVersion "Apache" "$APACHE_CONFIG" "$new"
 }
@@ -192,18 +203,15 @@ function setApacheVersion ()
 ################################################################################
 
 
-function getCurrentPhpVersion ()
-{
+getCurrentPhpVersion () {
     getReadableCurrentVersion "PHP" "$PHP_CONFIG"
 }
 
-function getAllPhpVersions ()
-{
+getAllPhpVersions () {
     getReadableAllVersions "PHP" "$PHP_CONFIG"
 }
 
-function setPhpVersion ()
-{
+setPhpVersion () {
     local new=$1
     setReadableVersion "PHP" "$PHP_CONFIG" "$new"
 }
@@ -212,18 +220,15 @@ function setPhpVersion ()
 ## MYSQL FUNCTIONS
 ################################################################################
 
-function getCurrentMysqlVersion ()
-{
+getCurrentMysqlVersion () {
     getReadableCurrentVersion "MySql" "$MYSQL_CONFIG"
 }
 
-function getAllMysqlVersions ()
-{
+getAllMysqlVersions () {
     getReadableAllVersions "MySql" "$MYSQL_CONFIG"
 }
 
-function setMysqlVersion ()
-{
+setMysqlVersion () {
     local new=$1
     setReadableVersion "MySql" "$MYSQL_CONFIG" "$new"
 }
@@ -232,13 +237,11 @@ function setMysqlVersion ()
 ## DOCUMENT ROOT FUNCTIONS
 ################################################################################
 
-function getCurrentDocumentRoot ()
-{
+getCurrentDocumentRoot () {
     getReadableCurrentConfig "Document root" "$DOCROOT_CONFIG"
 }
 
-function setDocumentRoot ()
-{
+setDocumentRoot () {
     local new=$1
     setReadbleConfig "Document root" "$DOCROOT_CONFIG" "$new"
 }
@@ -247,13 +250,11 @@ function setDocumentRoot ()
 ## PROJECTS PATH FUNCTIONS
 ################################################################################
 
-function getCurrentProjectsPath ()
-{
+getCurrentProjectsPath () {
     getReadableCurrentConfig "Projects path" "$WWWPATH_CONFIG"
 }
 
-function setProjectsPath ()
-{
+setProjectsPath () {
     local new=$1
     setReadbleConfig "Projects path" "$WWWPATH_CONFIG" "$new"
 }
@@ -262,13 +263,11 @@ function setProjectsPath ()
 ## DATABASES PATH FUNCTIONS
 ################################################################################
 
-function getCurrentDatabasesPath ()
-{
+getCurrentDatabasesPath () {
     getReadableCurrentConfig "Databases path" "$DBPATH_CONFIG"
 }
 
-function setDatabasesPath ()
-{
+setDatabasesPath () {
     local new=$1
     setReadbleConfig "Databases path" "$DBPATH_CONFIG" "$new"
 }
@@ -277,8 +276,7 @@ function setDatabasesPath ()
 ## GENERAL FUNCTIONS
 ################################################################################
 
-function showUsage()
-{
+showUsage () {
     echo ""
     echo "Usage: $0 [OPTION]..."
     echo ""
@@ -301,13 +299,15 @@ function showUsage()
     echo ""
 }
 
-function startDevilbox()
-{
+startDevilbox () {
     docker-compose up httpd php mysql
 }
 
-function parseArguments()
-{
+main () {
+    if [[ ! -d "$DEVILBOX_PATH" ]]; then
+        error "Devilbox not found, please make sure it is installed in your home directory."
+    fi
+    cd "$DEVILBOX_PATH" || return
     for i in "$@"; do
         case $i in
             -h|--help) showUsage; shift;;
@@ -327,7 +327,7 @@ function parseArguments()
             -d=*|--database=*) setDatabasesPath "${i#*=}"; shift;;
             -d|--database) getCurrentDatabasesPath; shift;;
             -s|--start) startDevilbox; shift;;
-            *) echo "Unknown command $i"; exit 1;;
+            *) error "Unknown command $i"; exit 1;;
         esac
     done
 }
@@ -335,9 +335,4 @@ function parseArguments()
 ################################################################################
 ## MAIN
 ################################################################################
-if [ ! -d "$DEVILBOX_PATH" ]; then
-    echo "Devilbox not found, please make sure it is installed in your home directory."
-    exit 1
-fi
-cd "$DEVILBOX_PATH" || return
-parseArguments "$@"
+main "$@"

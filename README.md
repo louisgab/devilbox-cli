@@ -1,4 +1,5 @@
 # devilbox-cli
+[![GitHub release](https://img.shields.io/github/tag/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/releases/) [![GitHub license](https://img.shields.io/github/license/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/blob/master/LICENSE)
 > A minimal cli tool to interact with devilbox from anywhere
 
 ---
