@@ -1,21 +1,13 @@
 # devilbox-cli
 [![GitHub release](https://img.shields.io/github/tag/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/releases/) [![GitHub license](https://img.shields.io/github/license/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/blob/master/LICENSE)
-> A minimal cli tool to interact with devilbox from anywhere
+> A simple and conveniant cli to manage devilbox from anywhere
 
 ---
-
-## Description
-
-`devilbox-cli.sh` is a simple and conveniant bash script. It consists of multiple grep and sed in order to easily change the `.env` configuration of devilbox and also a shorthand to start the containers. It has been validated with shellcheck.
 
 ## Getting Started
 
 ### Requirements
-Install devilbox in your home directory:
-```sh
-cd ~ && git clone https://github.com/cytopia/devilbox
-cd devilbox && $ cp env-example .env
-```
+[Devilbox](https://github.com/cytopia/devilbox#quick-start)
 
 ### Install
 Add the cli to your user bin:
