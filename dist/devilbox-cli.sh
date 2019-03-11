@@ -3,7 +3,7 @@
 VERSION="0.1.0"
 DATE="2019-03-10"
 NAME="devilbox-cli"
-DESCRIPTION="A devilbox cli tool to interact with devilbox from anywhere"
+DESCRIPTION="A simple and conveniant cli to manage devilbox from anywhere"
 LINK="https://github.com/louisgab/devilbox-cli"
 
 ENV_FILE=".env"
@@ -15,27 +15,19 @@ DOCROOT_CONFIG="HTTPD_DOCROOT_DIR="
 WWWPATH_CONFIG="HOST_PATH_HTTPD_DATADIR="
 DBPATH_CONFIG="HOST_PATH_MYSQL_DATADIR="
 
-COLOR_DEFAULT=$(tput sgr0)
-COLOR_RED=$(tput setaf 1)
-COLOR_GREEN=$(tput setaf 2)
-COLOR_YELLOW=$(tput setaf 3)
-COLOR_BLUE=$(tput setaf 4)
-# COLOR_PURPLE=$(tput setaf 5)
-# COLOR_CYAN=$(tput setaf 6)
-COLOR_LIGHT_GRAY=$(tput setaf 7)
-COLOR_DARK_GRAY=$(tput setaf 0)
-
 ## Basic wrappers around exit codes
 
 OK_CODE=0
 KO_CODE=1
 
-ok_code () {
-    printf "%d" "$OK_CODE"
+was_success() {
+    local exit_code=$?
+    [ "$exit_code" -eq "$OK_CODE" ]
 }
 
-ko_code () {
-    printf "%d" "$KO_CODE"
+was_error() {
+    local exit_code=$?
+    [ "$exit_code" -eq "$KO_CODE" ]
 }
 
 die () {
@@ -48,6 +40,16 @@ die () {
 }
 
 ## Functions used for fancy output
+
+COLOR_DEFAULT=$(tput sgr0)
+COLOR_RED=$(tput setaf 1)
+COLOR_GREEN=$(tput setaf 2)
+COLOR_YELLOW=$(tput setaf 3)
+COLOR_BLUE=$(tput setaf 4)
+# COLOR_PURPLE=$(tput setaf 5)
+# COLOR_CYAN=$(tput setaf 6)
+COLOR_LIGHT_GRAY=$(tput setaf 7)
+COLOR_DARK_GRAY=$(tput setaf 0)
 
 error() {
     local message=$1
@@ -67,46 +69,34 @@ info() {
 
 question() {
     local message=$1
-    printf "%-20s\n" "${COLOR_BLUE}[?]" "${COLOR_DEFAULT}$message"
+    printf "%s %s\n" "${COLOR_BLUE}[?]" "${COLOR_DEFAULT}$message"
 }
 
-## Functions used to acces the filesystem safely
-
-safe_cd() {
-    local path=$1
-    local error_msg=$2
-    if [[ ! -d "$path" ]]; then
-        error "$error_msg"
-    fi
-    cd "$path" >/dev/null || error "$error_msg"
-}
-
-result() {
-    local exit_code=$1
-    local success_action=$2
-    local error_action=$3
-    if [ "$exit_code" -eq "$OK_CODE" ]; then
-        $success_action
-    else
-        $error_action
-    fi
-    return "$exit_code"
-}
+## Functions used for user interaction
 
 has_confirmed() {
     local response=$1
     case "$response" in
-        [yY][eE][sS]|[yY]) ok_code;;
-        *) ko_code;;
+        [yY][eE][sS]|[yY]) return "$OK_CODE";;
+        *) return "$KO_CODE";;
     esac
 }
 
-ask_confirmation() {
+ask() {
     local question=$1
-    local action=$2
-    read -r -p "$(question "${question}" [y/N])" response
-    isconfirmed="$(has_confirmed "$response")"
-    result "$isconfirmed" "$action" die
+    local response
+    read -r -p "$(question "${question} [y/N] ")" response
+    printf '%s' "$response"
+    return "$OK_CODE"
+}
+
+confirm() {
+    local question=$1
+    if has_confirmed "$(ask "$question")"; then
+        return "$OK_CODE"
+    else
+        return "$KO_CODE"
+    fi
 }
 
 ## Functions used to manipulate choices values in .env file
@@ -115,11 +105,11 @@ is_choice_existing () {
     local config=$1
     local choice=$2
     local search
-    search=$(grep -qF "$config$choice" "$ENV_FILE")
-    if [ -z "$search" ] ;then
-        ok_code
+    search=$(grep -Eo "^#*$config$choice" "$ENV_FILE")
+    if was_success && [ ! -z "$search" ] ;then
+        return "$OK_CODE"
     else
-        ko_code
+        return "$KO_CODE"
     fi
 }
 
@@ -127,10 +117,23 @@ get_current_choice () {
     local config=$1
     local current
     current=$(grep -Eo "^$config+[.[:digit:]]*" "$ENV_FILE" | sed "s/.*$config//g")
-    if [ -z "$current" ] ;then
+    if was_success && [ ! -z "$current" ] ;then
         printf "%s" "$current"
+        return "$OK_CODE"
     else
-        ko_code
+        return "$KO_CODE"
+    fi
+}
+
+is_choice_available() {
+    local config=$1
+    local choice=$2
+    local current
+    current=$(get_current_choice "$config")
+    if was_success && [ "$choice" != "$current" ] ;then
+        return "$OK_CODE"
+    else
+        return "$KO_CODE"
     fi
 }
 
@@ -138,27 +141,114 @@ get_all_choices () {
     local config=$1
     local all
     all=$(grep -Eo "^#*$config+[.[:digit:]]*" "$ENV_FILE" | sed "s/.*$config//g")
-    printf "%s" "$all"
+    if was_success && [ ! -z "$all" ] ;then
+        printf "%s\n" "$all"
+        return "$OK_CODE"
+    else
+        return "$KO_CODE"
+    fi
 }
 
 set_choice () {
     local config=$1
     local new=$2
     local current
-    local isvalid
-    current="$(get_current_choice "$config")"
-    isvalid="$(is_choice_existing "$new")"
-    if [[ $isvalid -ne 0 ]]; then
-        ko_code
+    if ! is_choice_existing "$config" "$new" ||  ! is_choice_available "$config" "$new"; then
+        return "$KO_CODE"
+    fi
+    current=$(get_current_choice "$config")
+    if was_error; then
+        return "$KO_CODE"
+    fi
+    sed -i -e "s/\(^#*$config$current\).*/#$config$current/" "$ENV_FILE"
+    if was_error; then
+        return "$KO_CODE"
+    fi
+    sed -i -e "s/\(^#*$config$new\).*/$config$new/" "$ENV_FILE"
+    if was_error; then
+        return "$KO_CODE"
+    fi
+    current=$(get_current_choice "$config")
+    if was_success && [[ "$current" = "$new" ]]; then
+        return "$OK_CODE"
     else
-        sed -i -e "s/\(^#*$config$current\).*/#$config$current/" "$ENV_FILE"
-        sed -i -e "s/\(^#*$config$new\).*/$config$new/" "$ENV_FILE"
-        current="$(get_current_choice "$config")"
-        if [[ "$current" = "$new" ]]; then
-            ok_code
-        else
-            ko_code
-        fi
+        return "$KO_CODE"
+    fi
+}
+
+### READABLE VERSIONS
+
+is_readable_choice_existing () {
+    local type=$1
+    local config=$2
+    local choice=$3
+    if is_choice_existing "$config" "$choice"; then
+        success "$type version $choice is existing"
+        return "$OK_CODE"
+    else
+        error "$type version $choice does not exists"
+        return "$K0_CODE"
+    fi
+}
+
+get_readable_current_choice () {
+    local type=$1
+    local config=$2
+    local current
+    current=$(get_current_choice "$config")
+    if was_success; then
+        info "$type current version is $current"
+        return "$OK_CODE"
+    else
+        error "Couldnt retrieve current version of $type"
+        return "$KO_CODE"
+    fi
+}
+
+is_readable_choice_available() {
+    local config=$1
+    local choice=$2
+    local isavailable
+    if is_choice_available "$config" "$choice"; then
+        success "$type version $choice is available"
+        return "$OK_CODE"
+    else
+        error "$type is already using version $choice"
+        return "$K0_CODE"
+    fi
+}
+
+get_readable_all_choices () {
+    local type=$1
+    local config=$2
+    local all
+    all=$(get_all_choices "$config")
+    if was_success; then
+        info "$type available versions:"
+        printf "%s\n" "$all"
+        return "$OK_CODE"
+    else
+        error "Couldnt retrive available versions of $type"
+        return "$KO_CODE"
+    fi
+}
+
+set_readable_choice () {
+    local type=$1
+    local config=$2
+    local new=$3
+    if ! is_readable_choice_existing "$type" "$config" "$new"; then
+        return "$KO_CODE"
+    fi
+    if ! is_readable_choice_available "$config" "$new"; then
+        return "$KO_CODE"
+    fi
+    if set_choice "$config" "$new"; then
+        success "$type version updated to $new"
+        return "$OK_CODE"
+    else
+        error "$type version change failed"
+        return "$KO_CODE"
     fi
 }
 
@@ -168,7 +258,12 @@ get_config () {
     local config=$1
     local current
     current=$(grep -Eo "^$config+[[:alnum:][:punct:]]*" "$ENV_FILE" | sed "s/.*$config//g")
-    printf "%s" "$current"
+    if was_success && [ ! -z "$current" ] ;then
+        printf "%s" "$current"
+        return "$OK_CODE"
+    else
+        return "$KO_CODE"
+    fi
 }
 
 set_config () {
@@ -176,81 +271,34 @@ set_config () {
     local new=$2
     local current
     current="$(get_config "$config")"
+    if was_error; then
+        return "$KO_CODE"
+    fi
     sed -i -e "s/\(^#*$config${current//\//\\\/}\).*/$config${new//\//\\\/}/" "$ENV_FILE"
+    if was_error; then
+        return "$KO_CODE"
+    fi
     current="$(get_config "$config")"
-    if [[ "$current" = "$new" ]]; then
-        ok_code
+    if was_success && [[ "$current" = "$new" ]]; then
+        return "$OK_CODE"
     else
-        ko_code
+        return "$KO_CODE"
     fi
 }
 
-get_devilbox_path() {
-    if [ -n "$DEVILBOX_PATH" ]; then
-        printf %s "${DEVILBOX_PATH}"
-    else
-        printf %s "$HOME/.devilbox"
-    fi
-}
-
-is_readable_version_existing () {
-    local type=$1
-    local config=$2
-    local version=$3
-    local isvalid
-    isvalid=$(is_version_existing "$config" "$version")
-    if [[ "$isvalid" -eq 0 ]] ;then
-        success "$type version $version is available"
-    else
-        error "$type version $version does not exists"
-    fi
-}
-
-get_readable_current_version () {
-    local type=$1
-    local config=$2
-    local current
-    current=$(get_current_version "$config")
-    if [[ -n "$current" ]]; then
-        info "$type current version is $current"
-    else
-        error "Couldnt retrieve current version of $type"
-    fi
-}
-
-get_readable_all_versions () {
-    local type=$1
-    local config=$2
-    local all
-    all=$(get_all_versions "$config")
-    if [[ -n "$all" ]]; then
-        info "$type available versions:"
-        printf "%s" "$all"
-    else
-        error "Couldnt retrive available versions of $type"
-    fi
-}
-
-set_readable_version () {
-    local type=$1
-    local config=$2
-    local new=$3
-    if [[ "$(set_version "$config" "$new")" = "0" ]]; then
-        success "$type version updated to $new"
-    else
-        error "$type version change failed"
-    fi
-}
+### READABLE VERSIONS
 
 get_readable_current_config () {
     local type=$1
     local config=$2
     local current
     current=$(get_config "$config")
-    if [[ -n "$current" ]]; then
+    if was_success; then
         info "$type current config is $current"
+        return "$OK_CODE"
     else
         error "Couldnt retrieve current config of $type"
+        return "$KO_CODE"
     fi
 }
 
@@ -258,50 +306,62 @@ set_readable_config () {
     local type=$1
     local config=$2
     local new=$3
-    if [[ "$(set_config "$config" "$new")" = "0" ]]; then
+    if set_config "$config" "$new"; then
         success "$type config updated to $new"
+        return "$OK_CODE"
     else
         error "$type config change failed"
+        return "$KO_CODE"
+    fi
+}
+
+is_running () {
+    local all
+    all=$(docker-compose ps 2> /dev/null | grep "devilbox" | awk '{print $3}' | grep "Exit")
+    if was_success && [ -z "$all" ]; then
+        return "$OK_CODE";
+    else
+        return "$KO_CODE";
     fi
 }
 
 get_current_apache_version () {
-    get_readable_current_version "Apache" "$APACHE_CONFIG"
+    get_readable_current_choice "Apache" "$APACHE_CONFIG"
 }
 
 get_all_apache_versions () {
-    get_readable_all_versions "Apache" "$APACHE_CONFIG"
+    get_readable_all_choices "Apache" "$APACHE_CONFIG"
 }
 
 set_apache_version () {
     local new=$1
-    set_readable_version "Apache" "$APACHE_CONFIG" "$new"
+    set_readable_choice "Apache" "$APACHE_CONFIG" "$new"
 }
 
 get_current_php_version () {
-    get_readable_current_version "PHP" "$PHP_CONFIG"
+    get_readable_current_choice "PHP" "$PHP_CONFIG"
 }
 
 get_all_php_versions () {
-    get_readable_all_versions "PHP" "$PHP_CONFIG"
+    get_readable_all_choices "PHP" "$PHP_CONFIG"
 }
 
 set_php_version () {
     local new=$1
-    set_readable_version "PHP" "$PHP_CONFIG" "$new"
+    set_readable_choice "PHP" "$PHP_CONFIG" "$new"
 }
 
 get_current_mysql_version () {
-    get_readable_current_version "MySql" "$MYSQL_CONFIG"
+    get_readable_current_choice "MySql" "$MYSQL_CONFIG"
 }
 
 get_all_mysql_versions () {
-    get_readable_all_versions "MySql" "$MYSQL_CONFIG"
+    get_readable_all_choices "MySql" "$MYSQL_CONFIG"
 }
 
 set_mysql_version () {
     local new=$1
-    set_readable_version "MySql" "$MYSQL_CONFIG" "$new"
+    set_readable_choice "MySql" "$MYSQL_CONFIG" "$new"
 }
 
 get_current_document_root () {
@@ -354,6 +414,10 @@ config_command () {
 }
 
 enter_command () {
+    if ! is_running; then
+        error "Devilbox containers are not running"
+        return "$KO_CODE"
+    fi
     sh shell.sh
 }
 
@@ -410,6 +474,10 @@ open_https_intranet () {
 }
 
 open_command () {
+    if ! is_running; then
+        error "Devilbox containers are not running"
+        return "$KO_CODE"
+    fi
     if [[ $# -eq 0 ]] ; then
         open_https_intranet
     else
@@ -430,26 +498,40 @@ run_containers_silent () {
 }
 
 run_command () {
+    if is_running; then
+        error "Devilbox containers are already running"
+        return "$KO_CODE"
+    fi
     if [[ $# -eq 0 ]] ; then
-        run_containers_silent
+        run_containers
     else
         for arg in "$@"; do
             case $arg in
-                -h|--http) run_containers; shift;;
+                -s|--silent) run_containers_silent; shift;;
             esac
         done
     fi
 }
 
 stop_command () {
+    if ! is_running; then
+        error "Devilbox containers are not running"
+        return "$KO_CODE"
+    fi
     docker-compose stop
     docker-compose rm -f
 }
 
 update_command () {
-    stop_command
-    git pull origin master
-    sh update-docker.sh
+    if is_running; then
+        error "Devilbox containers are running, please use devilbox stop"
+        return "$KO_CODE"
+    fi
+    confirm "Did you backup your databases before?"
+    if was_success ;then
+        git pull origin master
+        sh update-docker.sh
+    fi
 }
 
 version_command() {
@@ -460,8 +542,25 @@ version_command() {
     printf "\n"
 }
 
+safe_cd() {
+    local path=$1
+    local error_msg=$2
+    if [[ ! -d "$path" ]]; then
+        error "$error_msg"
+    fi
+    cd "$path" >/dev/null || error "$error_msg"
+}
+
+get_devilbox_path() {
+    if [ -n "$DEVILBOX_PATH" ]; then
+        printf %s "${DEVILBOX_PATH}"
+    else
+        printf %s "$HOME/.devilbox"
+    fi
+}
+
 main () {
-    safe_cd "$(get_devilbox_path)" "Devilbox not found, please make sure it is installed in your home directory."
+    safe_cd "$(get_devilbox_path)" "Devilbox not found, please make sure it is installed in your home directory or use DEVILBOX_PATH in your profile."
     if [[ $# -eq 0 ]] ; then
         run_command
     else

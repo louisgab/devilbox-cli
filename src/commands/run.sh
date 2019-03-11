@@ -7,12 +7,16 @@ run_containers_silent () {
 }
 
 run_command () {
+    if is_running; then
+        error "Devilbox containers are already running"
+        return "$KO_CODE"
+    fi
     if [[ $# -eq 0 ]] ; then
-        run_containers_silent
+        run_containers
     else
         for arg in "$@"; do
             case $arg in
-                -h|--http) run_containers; shift;;
+                -s|--silent) run_containers_silent; shift;;
             esac
         done
     fi

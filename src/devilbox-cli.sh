@@ -1,18 +1,18 @@
+#!/bin/bash
+
 ##########################
 # For test purposes only #
 ##########################
 
 source config.sh
 
-source utils/exit.sh
+source utils/codes.sh
 source utils/messages.sh
-source utils/filesystem.sh
 source utils/prompt.sh
-source utils/choices.sh
-source utils/config.sh
-source utils/path.sh
 
-source commands/config/common.sh
+source commands/lib/choices.sh
+source commands/lib/config.sh
+source commands/lib/docker.sh
 source commands/config/apache.sh
 source commands/config/php.sh
 source commands/config/mysql.sh

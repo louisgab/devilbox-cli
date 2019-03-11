@@ -3,12 +3,14 @@
 OK_CODE=0
 KO_CODE=1
 
-ok_code () {
-    printf "%d" "$OK_CODE"
+was_success() {
+    local exit_code=$?
+    [ "$exit_code" -eq "$OK_CODE" ]
 }
 
-ko_code () {
-    printf "%d" "$KO_CODE"
+was_error() {
+    local exit_code=$?
+    [ "$exit_code" -eq "$KO_CODE" ]
 }
 
 die () {

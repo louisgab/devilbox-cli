@@ -1,3 +1,20 @@
+safe_cd() {
+    local path=$1
+    local error_msg=$2
+    if [[ ! -d "$path" ]]; then
+        error "$error_msg"
+    fi
+    cd "$path" >/dev/null || error "$error_msg"
+}
+
+get_devilbox_path() {
+    if [ -n "$DEVILBOX_PATH" ]; then
+        printf %s "${DEVILBOX_PATH}"
+    else
+        printf %s "$HOME/.devilbox"
+    fi
+}
+
 main () {
     safe_cd "$(get_devilbox_path)" "Devilbox not found, please make sure it is installed in your home directory or use DEVILBOX_PATH in your profile."
     if [[ $# -eq 0 ]] ; then

@@ -22,15 +22,13 @@ fi
 
 cat "$SRC_PATH"config.sh >> "$BUILD" && echo "" >> "$BUILD"
 
-cat "$SRC_PATH"utils/exit.sh >> "$BUILD" && echo "" >> "$BUILD"
+cat "$SRC_PATH"utils/codes.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"utils/messages.sh >> "$BUILD" && echo "" >> "$BUILD"
-cat "$SRC_PATH"utils/filesystem.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"utils/prompt.sh >> "$BUILD" && echo "" >> "$BUILD"
-cat "$SRC_PATH"utils/choices.sh >> "$BUILD" && echo "" >> "$BUILD"
-cat "$SRC_PATH"utils/config.sh >> "$BUILD" && echo "" >> "$BUILD"
-cat "$SRC_PATH"utils/path.sh >> "$BUILD" && echo "" >> "$BUILD"
 
-cat "$SRC_PATH"commands/config/common.sh >> "$BUILD" && echo "" >> "$BUILD"
+cat "$SRC_PATH"commands/lib/choices.sh >> "$BUILD" && echo "" >> "$BUILD"
+cat "$SRC_PATH"commands/lib/config.sh >> "$BUILD" && echo "" >> "$BUILD"
+cat "$SRC_PATH"commands/lib/docker.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"commands/config/apache.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"commands/config/php.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"commands/config/mysql.sh >> "$BUILD" && echo "" >> "$BUILD"

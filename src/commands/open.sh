@@ -7,6 +7,10 @@ open_https_intranet () {
 }
 
 open_command () {
+    if ! is_running; then
+        error "Devilbox containers are not running"
+        return "$KO_CODE"
+    fi
     if [[ $# -eq 0 ]] ; then
         open_https_intranet
     else
