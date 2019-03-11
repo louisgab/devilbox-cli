@@ -6,14 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2019-03-08
 ### Added
-    - Build script
+    - Build script that concatenates all source files in one dist file
     - New commands: enter, config, open, run, stop, update
-### Changed
-    - Restructure the whole project with separate files
-    - Use printf instead of echo
-    - Versions helpers are now called choices helpers
     - Possibility to change default devilbox path with DEVILBOX_PATH in profile source
+### Changed
+    - Restructure the whole project with separate files for clarity
+    - Lot of good practices
     - Fancy messages output
+    - Readme adapted to new usage
 
 ## [0.0.3] - 2019-03-08
 ### Changed
