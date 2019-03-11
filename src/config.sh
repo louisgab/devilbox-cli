@@ -1,9 +1,9 @@
 #!/bin/bash
 
 VERSION="0.1.0"
-DATE="2019-03-10"
+DATE="2019-03-11"
 NAME="devilbox-cli"
-DESCRIPTION="A simple and conveniant cli to manage devilbox from anywhere"
+DESCRIPTION="A simple and conveniant command line to manage devilbox from anywhere"
 LINK="https://github.com/louisgab/devilbox-cli"
 
 ENV_FILE=".env"

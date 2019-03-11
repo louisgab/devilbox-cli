@@ -13,12 +13,14 @@ source utils/prompt.sh
 source commands/lib/choices.sh
 source commands/lib/config.sh
 source commands/lib/docker.sh
+
 source commands/config/apache.sh
 source commands/config/php.sh
 source commands/config/mysql.sh
 source commands/config/docroot.sh
 source commands/config/projects.sh
 source commands/config/databases.sh
+
 source commands/config.sh
 source commands/enter.sh
 source commands/help.sh

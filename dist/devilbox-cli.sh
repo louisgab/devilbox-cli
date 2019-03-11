@@ -1,9 +1,9 @@
 #!/bin/bash
 
 VERSION="0.1.0"
-DATE="2019-03-10"
+DATE="2019-03-11"
 NAME="devilbox-cli"
-DESCRIPTION="A simple and conveniant cli to manage devilbox from anywhere"
+DESCRIPTION="A simple and conveniant command line to manage devilbox from anywhere"
 LINK="https://github.com/louisgab/devilbox-cli"
 
 ENV_FILE=".env"
@@ -317,8 +317,8 @@ set_readable_config () {
 
 is_running () {
     local all
-    all=$(docker-compose ps 2> /dev/null | grep "devilbox" | awk '{print $3}' | grep "Exit")
-    if was_success && [ -z "$all" ]; then
+    all=$(docker-compose ps 2> /dev/null | grep "devilbox" | awk '{print $3}' | grep "Up")
+    if was_success; then
         return "$OK_CODE";
     else
         return "$KO_CODE";
