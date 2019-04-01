@@ -1,6 +1,6 @@
 {
     "name": "devilbox-cli",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "description": "A simple and conveniant command line to manage devilbox from anywhere",
     "author": "Louis Gabriel <code@louisgab.me>",
     "license": "MIT",
@@ -9,7 +9,7 @@
     },
     "homepage": "https://github.com/louisgab/devilbox-cli",
     "bin": {
-        "devilbox": "./dist/devilbox-cli.sh",
+        "devilbox": "./dist/devilbox-cli.sh"
     },
     "scripts": {
         "clean": "./bin/clean.sh",
