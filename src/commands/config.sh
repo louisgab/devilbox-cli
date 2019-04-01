@@ -14,8 +14,6 @@ config_command () {
             -r|--root) get_current_document_root; shift;;
             -w=*|--www=*) set_projects_path "${arg#*=}"; shift;;
             -w|--www) get_current_projects_path; shift;;
-            -d=*|--database=*) set_databases_path "${arg#*=}"; shift;;
-            -d|--database) get_current_databases_path; shift;;
         esac
     done
 }

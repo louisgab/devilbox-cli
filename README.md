@@ -8,26 +8,28 @@
 
 ### Requirements
 You need [Devilbox](https://github.com/cytopia/devilbox#quick-start) to be installed somewhere on your computer.
+
 By default, the script will use the path `$HOME/.devilbox`.
+If you have cloned devilbox somewhere else, add the following to your profile and change `##PATH_TO_DEVILBOX##` accordingly:
+```sh
+export DEVILBOX_PATH="$HOME/##PATH_TO_DEVILBOX##"
+```
+Then reload your terminal or run `source ~/.zshrc` if you use zsh.
 
 ### Install
-Add the cli to your user bin:
-```sh
-curl -O https://raw.githubusercontent.com/louisgab/devilbox-cli/blob/master/dist/devilbox-cli.sh
-chmod +x devilbox-cli.sh
-sudo mv devilbox-cli.sh /usr/local/bin/devilbox
+As simple as :
+
 ```
+npm install -g devilbox-cli
+```
+
 If installed successfully, you should see something like this when you run `devilbox -v`:
 ```sh
 devilbox-cli v0.1.0 (2019-03-10)
 A simple and conveniant cli to manage devilbox from anywhere
 https://github.com/louisgab/devilbox-cli
 ```
-If you have cloned devilbox somewhere else, add the following to your profile and change `##PATH_TO_DEVILBOX##` accordingly:
-```sh
-export DEVILBOX_PATH="$HOME/##PATH_TO_DEVILBOX##"
-```
-Then reload your terminal or run `source ~/.zshrc` if you use zsh.
+
 ### Usage
 devilbox-cli provides all basic command to manage your installation:
 ```sh
@@ -64,9 +66,8 @@ devilbox config --php=7.3
 
 You can also point devilbox to your projects folder:
 ```sh
-devilbox config --www=../Documents/Projects/wwww --database=../Documents/Projects/mysql
+devilbox config --www=../Documents/Projects/www
 # [✔] Projects path config updated to ../Documents/Projects/wwww
-# [✔] Databases path config updated to ../Documents/Projects/mysql
 ```
 
 And if you dont remember a command, `devilbox help` is your best friend :)
