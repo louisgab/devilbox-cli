@@ -19,7 +19,6 @@ source commands/config/php.sh
 source commands/config/mysql.sh
 source commands/config/docroot.sh
 source commands/config/projects.sh
-source commands/config/databases.sh
 
 source commands/config.sh
 source commands/enter.sh
