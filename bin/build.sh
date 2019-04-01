@@ -34,5 +34,7 @@ cat "$SRC_PATH"commands/version.sh >> "$BUILD" && echo "" >> "$BUILD"
 
 cat "$SRC_PATH"main.sh >> "$BUILD" && echo "" >> "$BUILD"
 
+chmod +x "$BUILD"
+
 echo "Done."
 exit 0
