@@ -1,4 +1,4 @@
-## Basic wrappers around exit codes
+## Functions utilities around exit/return codes
 
 OK_CODE=0
 KO_CODE=1
@@ -13,11 +13,15 @@ was_error() {
     [ "$exit_code" -eq "$KO_CODE" ]
 }
 
-die () {
-    local exit_code=$1
-    if [ ! -z "$exit_code" ]; then
-        exit "$exit_code"
-    else
-        exit "$?"
+die_error () {
+    local message=$1
+    error "$message"
+    exit "$KO_CODE"
+}
+
+die_on_error () {
+    local message=$1
+    if was_error; then
+        die_error "$message"
     fi
 }

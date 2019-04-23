@@ -1,4 +1,4 @@
-# devilbox-cli
+# Devilbox CLI
 [![GitHub release](https://img.shields.io/github/tag/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/releases/) [![GitHub license](https://img.shields.io/github/license/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/blob/master/LICENSE)
 > A simple and conveniant command line to manage devilbox from anywhere
 

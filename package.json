@@ -1,6 +1,7 @@
 {
     "name": "devilbox-cli",
     "version": "0.2.3",
+    "global": "true",
     "description": "A simple and conveniant command line to manage devilbox from anywhere",
     "author": "Louis Gabriel <code@louisgab.me>",
     "license": "MIT",
@@ -17,6 +18,9 @@
         "build": "./bin/build.sh",
         "prepare": "npm run clean && npm run lint && npm run build"
     },
+    "files": [
+        "/dist/devilbox-cli.sh"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/louisgab/devilbox-cli.git"

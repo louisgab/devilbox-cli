@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 SCRIPT="devilbox-cli.sh"
 DIST_PATH="./dist/"
