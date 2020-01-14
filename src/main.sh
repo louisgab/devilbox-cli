@@ -25,6 +25,7 @@ main () {
             e|enter) shift; enter_command;;
             h|help|-h|--help) shift; help_command;;
             o|open) shift; open_command "$@";;
+            restart) shift; restart_command "$@";;
             r|run) shift; run_command "$@";;
             s|stop) shift; stop_command;;
             u|update) shift; update_command;;

@@ -445,6 +445,8 @@ help_command () {
     add_usage_command "h, help" "List all available commands"
     add_usage_command "o,open" "Open the devilbox intranet"
     add_usage_arg "-h,--http" "Use non-https url"
+    add_usage_command "restart" "Restart the devilbox docker containers"
+    add_usage_arg "-s,--silent" "Hide errors and run in background"
     add_usage_command "r,run" "Run the devilbox docker containers"
     add_usage_arg "-s,--silent" "Hide errors and run in background"
     add_usage_command "s,stop" "Stop devilbox and docker containers"
@@ -475,6 +477,11 @@ open_command () {
             esac
         done
     fi
+}
+
+restart_command() {
+    stop_command
+    run_command "$@"
 }
 
 get_default_containers() {
@@ -608,6 +615,7 @@ main () {
             e|enter) shift; enter_command;;
             h|help|-h|--help) shift; help_command;;
             o|open) shift; open_command "$@";;
+            restart) shift; restart_command "$@";;
             r|run) shift; run_command "$@";;
             s|stop) shift; stop_command;;
             u|update) shift; update_command;;
