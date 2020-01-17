@@ -1,9 +1,17 @@
+get_default_containers() {
+   if [ -n "$DEVILBOX_CONTAINERS" ]; then
+        printf %s "${DEVILBOX_CONTAINERS}"
+    else
+        printf %s "httpd php mysql"
+    fi
+}
+
 run_containers () {
-    docker-compose up httpd php mysql
+    docker-compose up $(get_default_containers)
 }
 
 run_containers_silent () {
-    docker-compose up -d httpd php mysql
+    docker-compose up -d $(get_default_containers)
 }
 
 run_command () {

@@ -72,6 +72,15 @@ devilbox config --www=../Documents/Projects/www
 
 And if you dont remember a command, `devilbox help` is your best friend :)
 
+### Optional Configuration
+
+By default, the `run` command will start the default LAMP stack containers `php httpd mysql`. The command can be customized by configuring your desired services via the `$DEVILBOX_CONTAINERS` variable. For example, if you'd like to also run the NOSQL stack, you would define the following:
+
+```sh
+export DEVILBOX_CONTAINERS="php httpd mysql redis memcd mongo"
+```
+Then reload your terminal or run `source ~/.zshrc` if you use zsh.
+
 ### Important notes
 
 The script was tested on zsh and bash on linux. Use at your own risk on other platforms.
