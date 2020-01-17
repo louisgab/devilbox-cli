@@ -34,6 +34,8 @@ help_command () {
     add_usage_command "h, help" "List all available commands"
     add_usage_command "o,open" "Open the devilbox intranet"
     add_usage_arg "-h,--http" "Use non-https url"
+    add_usage_command "restart" "Restart the devilbox docker containers"
+    add_usage_arg "-s,--silent" "Hide errors and run in background"
     add_usage_command "r,run" "Run the devilbox docker containers"
     add_usage_arg "-s,--silent" "Hide errors and run in background"
     add_usage_command "s,stop" "Stop devilbox and docker containers"

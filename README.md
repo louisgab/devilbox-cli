@@ -33,11 +33,12 @@ https://github.com/louisgab/devilbox-cli
 ### Usage
 devilbox-cli provides all basic command to manage your installation:
 ```sh
-devilbox run    # Start the containers
-devilbox enter  # Enter the php container with shell.sh script
-devilbox open   # Open the devilbox intranet
-devilbox stop   # Stop all containers
-devilbox update # Update to latest devilbox version
+devilbox run     # Start the containers
+devilbox enter   # Enter the php container with shell.sh script
+devilbox open    # Open the devilbox intranet
+devilbox stop    # Stop all containers
+devilbox restart # Stop and restart all containers
+devilbox update  # Update to latest devilbox version
 ```
 
 To see containers current versions defined in devilbox `.env` file, use the `config` command:

@@ -24,6 +24,7 @@ source commands/config.sh
 source commands/enter.sh
 source commands/help.sh
 source commands/open.sh
+source commands/restart.sh
 source commands/run.sh
 source commands/stop.sh
 source commands/update.sh
