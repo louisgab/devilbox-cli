@@ -1,5 +1,8 @@
-# devilbox-cli
-[![GitHub release](https://img.shields.io/github/tag/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/releases/) [![GitHub license](https://img.shields.io/github/license/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/blob/master/LICENSE)
+# Devilbox CLI
+![npm](https://img.shields.io/npm/v/devilbox-cli.svg?style=flat-square)
+![npm](https://img.shields.io/npm/dt/devilbox-cli.svg?style=flat-square)
+![GitHub file size in bytes](https://img.shields.io/github/size/louisgab/devilbox-cli/dist/devilbox-cli.sh.svg?style=flat-square)
+[![GitHub license](https://img.shields.io/github/license/louisgab/devilbox-cli.svg?style=flat-square)](https://github.com/louisgab/devilbox-cli/blob/master/LICENSE)
 > A simple and conveniant command line to manage devilbox from anywhere
 
 ---
@@ -25,7 +28,7 @@ npm install -g devilbox-cli
 
 If installed successfully, you should see something like this when you run `devilbox -v`:
 ```sh
-devilbox-cli v0.1.0 (2019-03-10)
+devilbox-cli v0.3.0 (2020-01-17)
 A simple and conveniant cli to manage devilbox from anywhere
 https://github.com/louisgab/devilbox-cli
 ```
