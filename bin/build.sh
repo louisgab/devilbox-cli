@@ -7,7 +7,7 @@ BUILD="${DIST_PATH}${SCRIPT}"
 
 
 # Add files in same order as src
-cat "$SRC_PATH"config.sh >> "$BUILD" && echo "" >> "$BUILD"
+cat "$SRC_PATH"config.sh > "$BUILD" && echo "" >> "$BUILD"
 
 cat "$SRC_PATH"utils/codes.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"utils/messages.sh >> "$BUILD" && echo "" >> "$BUILD"
