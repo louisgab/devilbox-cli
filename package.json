@@ -1,6 +1,6 @@
 {
     "name": "devilbox-cli",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "A simple and conveniant command line to manage devilbox from anywhere",
     "author": "Louis Gabriel <code@louisgab.me>",
     "license": "MIT",

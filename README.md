@@ -35,7 +35,7 @@ npm install -g devilbox-cli
 If installed successfully, you should see something like this when you run `devilbox -v`:
 
 ```sh
-devilbox-cli v0.3.1 (2020-05-23)
+devilbox-cli v0.3.2 (2020-05-27)
 A simple and conveniant cli to manage devilbox from anywhere
 https://github.com/louisgab/devilbox-cli
 ```
