@@ -24,6 +24,7 @@ cat "$SRC_PATH"commands/config/docroot.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"commands/config/projects.sh >> "$BUILD" && echo "" >> "$BUILD"
 
 cat "$SRC_PATH"commands/config.sh >> "$BUILD" && echo "" >> "$BUILD"
+cat "$SRC_PATH"commands/compose.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"commands/enter.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"commands/help.sh >> "$BUILD" && echo "" >> "$BUILD"
 cat "$SRC_PATH"commands/open.sh >> "$BUILD" && echo "" >> "$BUILD"

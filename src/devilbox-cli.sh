@@ -21,6 +21,7 @@ source commands/config/docroot.sh
 source commands/config/projects.sh
 
 source commands/config.sh
+source commands/compose.sh
 source commands/enter.sh
 source commands/help.sh
 source commands/open.sh

@@ -23,6 +23,7 @@ main () {
     else
         case $1 in
             c|config) shift; config_command "$@";;
+            compose) shift; compose_command "$@";;
             e|enter) shift; enter_command;;
             h|help|-h|--help) shift; help_command;;
             o|open) shift; open_command "$@";;
