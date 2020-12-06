@@ -474,10 +474,10 @@ mysql_command() {
         return "$KO_CODE"
     fi
 
-    if [ -z "$@" ]; then
+    if [ -z "$1" ]; then
         exec_command 'mysql -hmysql -uroot'
     else
-        exec_command 'mysql -hmysql -uroot -e "$@"'
+        exec_command "mysql -hmysql -uroot -e '$1'"
     fi
 }
 
