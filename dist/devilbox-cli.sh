@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION="0.3.2"
-DATE="2020-05-27"
+VERSION="0.4.0"
+DATE="2020-12-06"
 NAME="devilbox-cli"
 DESCRIPTION="A simple and conveniant command line to manage devilbox from anywhere"
 LINK="https://github.com/louisgab/devilbox-cli"
@@ -381,6 +381,10 @@ set_projects_path () {
     set_readable_config "Projects path" "$WWWPATH_CONFIG" "$new"
 }
 
+check_command () {
+    ./check-config.sh
+}
+
 config_command () {
     for arg in "$@"; do
         case $arg in
@@ -406,7 +410,16 @@ enter_command () {
         error "Devilbox containers are not running"
         return "$KO_CODE"
     fi
-    sh shell.sh
+    ./shell.sh
+}
+
+exec_command() {
+    if ! is_running; then
+        error "Devilbox containers are not running"
+        return "$KO_CODE"
+    fi
+
+    docker-compose exec -u devilbox php bash -c "$@"
 }
 
 add_usage_command () {
@@ -453,6 +466,19 @@ help_command () {
     add_usage_command "u,update" "Update devilbox and docker containers"
     add_usage_command "v, version" "Show version information"
     printf "\n"
+}
+
+mysql_command() {
+    if ! is_running; then
+        error "Devilbox containers are not running"
+        return "$KO_CODE"
+    fi
+
+    if [ -z "$@" ]; then
+        exec_command 'mysql -hmysql -uroot'
+    else
+        exec_command 'mysql -hmysql -uroot -e "$@"'
+    fi
 }
 
 open_http_intranet () {
@@ -612,9 +638,12 @@ main () {
         help_command
     else
         case $1 in
+            check) shift; check_command;;
             c|config) shift; config_command "$@";;
             e|enter) shift; enter_command;;
+            x|exec) shift; exec_command "$@";;
             h|help|-h|--help) shift; help_command;;
+            mysql) shift; mysql_command "$@";;
             o|open) shift; open_command "$@";;
             restart) shift; restart_command "$@";;
             r|run) shift; run_command "$@";;

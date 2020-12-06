@@ -1,7 +1,8 @@
-enter_command () {
+exec_command() {
     if ! is_running; then
         error "Devilbox containers are not running"
         return "$KO_CODE"
     fi
-    ./shell.sh
+
+    docker-compose exec -u devilbox php bash -c "$@"
 }

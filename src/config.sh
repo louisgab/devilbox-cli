@@ -1,7 +1,7 @@
 #!/bin/bash
 
-VERSION="0.3.2"
-DATE="2020-05-27"
+VERSION="0.4.0"
+DATE="2020-12-06"
 NAME="devilbox-cli"
 DESCRIPTION="A simple and conveniant command line to manage devilbox from anywhere"
 LINK="https://github.com/louisgab/devilbox-cli"
