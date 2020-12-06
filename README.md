@@ -35,7 +35,7 @@ npm install -g devilbox-cli
 If installed successfully, you should see something like this when you run `devilbox -v`:
 
 ```sh
-devilbox-cli v0.3.2 (2020-05-27)
+devilbox-cli v0.4.1 (2020-12-06)
 A simple and conveniant cli to manage devilbox from anywhere
 https://github.com/louisgab/devilbox-cli
 ```
@@ -45,11 +45,15 @@ https://github.com/louisgab/devilbox-cli
 devilbox-cli provides all basic command to manage your installation:
 
 ```sh
-devilbox run     # Start the containers
+devilbox check   # Check your .env
+devilbox config  # Get and set variables on your .env
 devilbox enter   # Enter the php container with shell.sh script
+devilbox exec    # Execute a command in the container
+devilbox mysql   # Execute a command in the container
 devilbox open    # Open the devilbox intranet
+devilbox run     # Start the containers
 devilbox stop    # Stop all containers
-devilbox restart # Stop and restart all containers
+devilbox restart # Stop and rerun all containers
 devilbox update  # Update to latest devilbox version
 ```
 
@@ -76,8 +80,8 @@ devilbox config --mysql=*
 And of course, it can change any version:
 
 ```sh
-devilbox config --php=7.3
-# [✔] PHP version updated to 7.3
+devilbox config --php=8.0
+# [✔] PHP version updated to 8.0
 ```
 
 You can also point devilbox to your projects folder:
