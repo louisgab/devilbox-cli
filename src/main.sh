@@ -22,9 +22,12 @@ main () {
         help_command
     else
         case $1 in
+            check) shift; check_command;;
             c|config) shift; config_command "$@";;
             e|enter) shift; enter_command;;
+            x|exec) shift; exec_command "$@";;
             h|help|-h|--help) shift; help_command;;
+            mysql) shift; mysql_command "$@";;
             o|open) shift; open_command "$@";;
             restart) shift; restart_command "$@";;
             r|run) shift; run_command "$@";;
