@@ -40,6 +40,20 @@ A simple and conveniant cli to manage devilbox from anywhere
 https://github.com/louisgab/devilbox-cli
 ```
 
+#### Alternatives
+If you don't have npm or don't wan to use it, you can also download the script directly:
+```sh
+curl -O https://raw.githubusercontent.com/louisgab/devilbox-cli/master/dist/devilbox-cli.sh
+chmod +x devilbox-cli.sh
+sudo mv devilbox-cli.sh /usr/local/bin/devilbox
+```
+This way you can call the script from anywhere, but you won't be able to download updates (that was the point of using npm).
+For a manual update, delete it first 
+```sh
+sudo rm /usr/local/bin/devilbox
+```
+Then re-download the script.
+
 ### Usage
 
 devilbox-cli provides all basic command to manage your installation:
